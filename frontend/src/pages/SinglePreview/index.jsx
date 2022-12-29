@@ -18,11 +18,11 @@ import { PDFExport, savePDF } from "@progress/kendo-react-pdf";
 
 function SinglePreview({
   logo,
-  certificateTitle,
-  awardeeName,
   message,
   issuedBy,
-  issueDate
+  issueDate,
+  awardeeName,
+  certificateTitle,
 }) {
   const navigate = useNavigate();
   //STATES FOR TEMPLATES
@@ -49,8 +49,8 @@ function SinglePreview({
   };
 
   const [openModal, setOpenModal] = useState(false);
-  const [isAuntheticated, setIsAuntheticated] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [isAuntheticated, setIsAuntheticated] = useState(false);
 
   useEffect(() => {
     localStorage.getItem("userData")
@@ -58,22 +58,8 @@ function SinglePreview({
       : setIsAuntheticated(false);
   }, []);
 
-  function handleUnloggedUsers(e) {
-    e.preventDefault();
-    setOpenModal(!openModal);
-  }
-
-  // const container = React.useRef(null);
   const pdfExportComponent = React.useRef(null);
 
-  // const exportPDFWithMethod = () => {
-  //   let element = container.current || document.body;
-  //   savePDF(element, {
-  //     paperSize: "auto",
-  //     margin: 40,
-  //     fileName: `Report for ${new Date().getFullYear()}`
-  //   });
-  // };
   const exportPDFWithComponent = () => {
     if (pdfExportComponent.current) {
       pdfExportComponent.current.save();
@@ -83,33 +69,18 @@ function SinglePreview({
   // REF FOR PNG AND PDF
   var certificateWrapper = React.createRef();
 
-  // FUNCTION FOR HANDLING PDF DOWNLOAD
-
-  // const handleDownloadPdf = async () => {
-  //   const element = certificateWrapper.current;
-  //   const canvas = await html2canvas(element);
-  //   const data = canvas.toDataURL("image/png");
-
-  //   const pdf = new jsPDF({
-  //     orientation: "l",
-  //     unit: "pt",
-  //     format: [canvas.width, canvas.height]
-  //   });
-  //   pdf.addImage(data, "PNG", 0, 0, canvas.width, canvas.height);
-  //   pdf.save(`${awardeeName}.pdf`);
-  // };
-
   const Toast = Swal.mixin({
+    timer: 3000,
     toast: true,
     position: "top-end",
-    showConfirmButton: false,
-    timer: 3000,
     timerProgressBar: true,
+    showConfirmButton: false,
     didOpen: toast => {
       toast.addEventListener("mouseenter", Swal.stopTimer);
       toast.addEventListener("mouseleave", Swal.resumeTimer);
     }
   });
+
   const handleSendCertificate = async e => {
     try {
       localStorage.getItem("userData")
@@ -121,7 +92,7 @@ function SinglePreview({
         setModalMessage("You need to sign up to send certificate to your mail");
         return;
       }
-      // navigate("/comingsoon");
+
       const element = certificateWrapper.current;
       const canvas = await html2canvas(element);
       const data = canvas.toDataURL("image/png");
@@ -175,6 +146,7 @@ function SinglePreview({
       });
     }
   };
+
   return (
     <div id="singlePreview">
       {/* IMAGE OF YOUR CERTIFICATE READY TO BE DOWNLOADED OR SENT */}
@@ -189,81 +161,59 @@ function SinglePreview({
       </div>
 
       {/* START OF CERTIFICATE */}
-
-      {/* <div className="example-config">
-        <button
-          className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-          onClick={exportPDFWithComponent}
-        >
-          Export with component
-        </button>
-        &nbsp;
-        <button
-          className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
-          onClick={exportPDFWithMethod}
-        >
-          Export with method
-        </button>
-      </div> */}
-      {/* <div className="border rounded p-2">
-     
-      </div> */}
-
       {templateone && (
         <PDFExport
-          ref={pdfExportComponent}
           paperSize="auto"
-          fileName={`${awardeeName}`}
           author="Certgo Team"
+          ref={pdfExportComponent}
+          fileName={`${awardeeName}`}
         >
           <div ref={certificateWrapper}>
             <Template1
               logo={logo}
-              certificateTitle={certificateTitle}
-              awardeeName={awardeeName}
               message={message}
               issuedBy={issuedBy}
               issueDate={issueDate}
+              awardeeName={awardeeName}
+              certificateTitle={certificateTitle}
             />
           </div>
         </PDFExport>
       )}
       {templatetwo && (
         <PDFExport
-          ref={pdfExportComponent}
           paperSize="auto"
-          fileName={`${awardeeName}`}
           author="Certgo Team"
-          //scale = {0.6}
+          ref={pdfExportComponent}
+          fileName={`${awardeeName}`}
         >
           <div ref={certificateWrapper}>
             <Template2
               logo={logo}
-              certificateTitle={certificateTitle}
-              awardeeName={awardeeName}
               message={message}
               issuedBy={issuedBy}
               issueDate={issueDate}
+              awardeeName={awardeeName}
+              certificateTitle={certificateTitle}
             />
           </div>
         </PDFExport>
       )}
       {templatethree && (
         <PDFExport
-          ref={pdfExportComponent}
           paperSize="auto"
-          fileName={`${awardeeName}`}
           author="Certgo Team"
-          //scale = {0.6}
+          ref={pdfExportComponent}
+          fileName={`${awardeeName}`}
         >
           <div ref={certificateWrapper}>
             <Template3
               logo={logo}
-              certificateTitle={certificateTitle}
-              awardeeName={awardeeName}
               message={message}
               issuedBy={issuedBy}
               issueDate={issueDate}
+              awardeeName={awardeeName}
+              certificateTitle={certificateTitle}
             />
           </div>
         </PDFExport>
@@ -273,7 +223,6 @@ function SinglePreview({
 
       <div className="certificate-share-hero">
         {/* BUTTONS FOR EITHER SENDIMG OR DOWNLOADING */}
-
         <div className="buttons">
           <Button
             className="send-button"
