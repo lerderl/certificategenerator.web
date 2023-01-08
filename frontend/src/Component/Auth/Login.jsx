@@ -1,18 +1,15 @@
 import { useState } from "react";
-import { gapi } from "gapi-script";
 import React, { useEffect } from "react";
-import { GoogleLogin } from "react-google-login";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
 import "./login.scss";
-import Input from "../../Input";
-import Button from "../../button";
-import axios from "../../../api/axios";
-import Loader from "../../ButtonLoader";
-import { Toast } from "../../ToastAlert";
+import Input from "../Input";
+import Button from "../button";
+import axios from "../../api/axios";
+import Loader from "../ButtonLoader";
+import { Toast } from "../ToastAlert";
 import googleSVG from "./assets/google.svg";
-import cert from "./assets/Frame 427319608.svg";
-import useAppProvider from "../../../hooks/useAppProvider";
+import Banner from "./assets/auth-banner.png";
+import useAppProvider from "../../hooks/useAppProvider";
 
 const Login = () => {
   const { setAccess } = useAppProvider();
@@ -25,9 +22,6 @@ const Login = () => {
     password: "",
     acceptTerms: false
   });
-
-  const CLIENT_ID =
-    "52168821352-4sc11trj4qtq95051mrnrbinfgmla3ai.apps.googleusercontent.com";
 
   const [useremail, setUserEmail] = useState();
   const [password, setPassword] = useState();
@@ -121,46 +115,35 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    const initClient = () => {
-      gapi.auth2.init({
-        clientId: CLIENT_ID
-        // scope: ""
-      });
-    };
-    gapi.load("client:auth2", initClient);
-  }, []);
-
-  const onSuccess = res => {
-    setToken({ accessToken: res.tokenId });
-
-    if (token.accessToken) loginUserGoogle(token);
-  };
-
-  const onFailure = err => {
-    console.log("failed:", err);
-  };
-
   // Send access token to backend
-  async function loginUserGoogle(token) {
-    const response = await axios.post("/auth/login", token);
+  async function loginUserGoogle() {
+    const response = await axios.post("/auth/getAuthUrl", {
+      authType: "login"
+    });
 
-    // send response to localstorage
-    const userData = {
-      userId: response.data.data.userId,
-      name: response.data.data.name,
-      token: response.data.data.token,
-      refreshToken: response.data.data.refreshToken,
-      subscription: response.data.data.subscription
-    };
-    localStorage.setItem("userData", JSON.stringify(userData));
-    localStorage.setItem("profileName", JSON.stringify(userData.name));
-
-    if (location.state?.from.pathname) {
-      navigate(location.state.from);
+    console.log(response);
+    console.log(response?.data.urlAuth);
+    if (response) {
+      window.location.href = response.data.urlAuth;
     } else {
-      navigate("/dashboard");
+      navigate("/login");
     }
+    // send response to localstorage
+    // const userData = {
+    //   userId: response.data.data.userId,
+    //   name: response.data.data.name,
+    //   token: response.data.data.token,
+    //   refreshToken: response.data.data.refreshToken,
+    //   subscription: response.data.data.subscription
+    // };
+    // localStorage.setItem("userData", JSON.stringify(userData));
+    // localStorage.setItem("profileName", JSON.stringify(userData.name));
+
+    // if (location.state?.from.pathname) {
+    //   navigate(location.state.from);
+    // } else {
+    //   navigate("/dashboard");
+    // }
   }
   return (
     <div id="login">
@@ -171,24 +154,15 @@ const Login = () => {
             <small id="startGenerating">
               Start generating certificates by creating a Certgo account
             </small>
-            <GoogleLogin
-              clientId={CLIENT_ID}
-              buttonText="Sign in with Google"
-              onSuccess={onSuccess}
-              onFailure={onFailure}
-              cookiePolicy={"single_host_origin"}
-              isSignedIn={true}
-              render={renderProps => (
-                <div
-                  onClick={renderProps.onClick}
-                  id="signupG"
-                  style={{ cursor: "pointer" }}
-                >
-                  <img alt="" src={googleSVG} id="img_id" />
-                  Login using Google
-                </div>
-              )}
-            />
+
+            <div
+              onClick={loginUserGoogle}
+              id="signupG"
+              style={{ cursor: "pointer" }}
+            >
+              <img alt="" src={googleSVG} id="img_id" />
+              Login using Google
+            </div>
             {/* <div id="signupA">
               <img alt="" src={appleSVG} id="imgs" />
               Login using Apple
@@ -255,7 +229,7 @@ const Login = () => {
           </p>
         </div>
         <div className="emptySpace">
-          <img className="cert_img" alt="" src={cert} />
+          <img className="cert_img" alt="" src={Banner} />
         </div>
       </div>
     </div>

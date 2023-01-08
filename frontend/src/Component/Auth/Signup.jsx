@@ -4,14 +4,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import "./signup.scss";
-import Input from "../../Input";
-import Button from "../../button";
-import Loader from "../../ButtonLoader";
-import { Toast } from "../../ToastAlert";
+import Input from "../Input";
+import Button from "../button";
+import Loader from "../ButtonLoader";
+import { Toast } from "../ToastAlert";
 import googleSVG from "./assets/google.svg";
-import { baseURL } from "../../../api/axios";
-import cert from "./assets/Frame 427319608.svg";
-import useAppProvider from "../../../hooks/useAppProvider";
+import { baseURL } from "../../api/axios";
+import Banner from "./assets/auth-banner.png";
+import useAppProvider from "../../hooks/useAppProvider";
 
 const Signup = () => {
   const { setAccess } = useAppProvider();
@@ -283,7 +283,7 @@ const Signup = () => {
           </p>
         </div>
         <div className="emptySpace">
-          <img className="cert_img" alt="" src={cert} />
+          <img className="cert_img" alt="" src={Banner} />
         </div>
       </div>
     </div>
