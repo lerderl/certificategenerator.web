@@ -7,9 +7,13 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      {pathname !== "/login" && <Navbar />}
+      {pathname !== "/dashboard" &&
+        pathname !== "/login" &&
+        pathname !== "/signup" && <Navbar />}
       {children}
-      {pathname !== "/dashboard" || (pathname !== "login" && <Footer />)}
+      {pathname !== "/dashboard" &&
+        pathname !== "/signup" &&
+        pathname !== "/login" && <Footer />}
     </>
   );
 };
