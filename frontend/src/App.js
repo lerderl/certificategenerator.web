@@ -37,8 +37,8 @@ import "./Style/App.scss";
 import { useState, lazy, Suspense } from "react";
 import { Loader } from "./Component";
 
-const Login = lazy(() => import("./Component/Signup-Login/assets/Login"));
-const Signup = lazy(() => import("./Component/Signup-Login/assets/Signup"));
+const Login = lazy(() => import("./Component/Auth/Login"));
+const Signup = lazy(() => import("./Component/Auth/Signup"));
 const ProtectedRoutes = lazy(() => import("./Component/ProtectedRoutes"));
 
 function App() {
