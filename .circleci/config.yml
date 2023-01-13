@@ -19,7 +19,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "./frontend/package.json" }}
       - run:
-          name: Build front-end
+          name: build front-end
           command: |
             cd frontend
             npm install
@@ -60,11 +60,12 @@ jobs:
       - restore_cache:
             key: dependency-cache-{{ checksum "./backend/package.json" }}
       - run:
-          name: Node Install
+          name: build back-end
           command: |
             cd backend
             npm cache clear --force
             sudo npm install -g --unsafe-perm=true --allow-root
+#            node index.js
       - save_cache:
           key: dependency-cache-{{ checksum "./backend/package.json" }}
           paths:
@@ -123,7 +124,6 @@ jobs:
             sudo cp -fr build/* /var/www/certgo.hng.tech/html2
             cd ..
             cd backend && npm i --force
-            pm2 start /home/sean/certgo-staging/backend/ecosystem.config.js
             sudo pm2 save
             rm -rf /home/sean/certificategenerator.web && exit"
               
