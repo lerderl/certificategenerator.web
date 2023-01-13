@@ -134,48 +134,48 @@ const Signup = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    async function getCode() {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlSearchParams.entries());
-      if (params.code) {
-        console.log(params.code);
-        const res = await axios.post("/auth/signup", { code: params.code });
-        console.log(res);
-        try {
-          if (res.status === 200 || res.status === 201) {
-            Toast.fire({
-              icon: "success",
-              title: "Signed up successfully"
-            });
-            if (location.state?.from.pathname) {
-              navigate(location.state.from);
-            } else {
-              navigate("/login");
-            }
-            setAccess(true);
-          }
-        } catch (error) {
-          if (error.status === 401) {
-            Toast.fire({
-              icon: "error",
-              title: "A user with this email already exists"
-            });
-            setLoading(false);
-          } else if (error.status === 500) {
-            Toast.fire({
-              icon: "error",
-              title: "Internal server Error"
-            });
+  async function getCode() {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    if (params.code) {
+      console.log(params.code);
+      const res = await axios.post("/auth/signup", { code: params.code });
+      console.log(res);
+      try {
+        if (res.status === 200 || res.status === 201) {
+          Toast.fire({
+            icon: "success",
+            title: "Signed up successfully"
+          });
+          if (location.state?.from.pathname) {
+            navigate(location.state.from);
           } else {
-            Toast.fire({
-              icon: "error",
-              title: "Something went wrong"
-            });
+            navigate("/login");
           }
+          setAccess(true);
+        }
+      } catch (error) {
+        if (error.status === 401) {
+          Toast.fire({
+            icon: "error",
+            title: "A user with this email already exists"
+          });
+          setLoading(false);
+        } else if (error.status === 500) {
+          Toast.fire({
+            icon: "error",
+            title: "Internal server Error"
+          });
+        } else {
+          Toast.fire({
+            icon: "error",
+            title: "Something went wrong"
+          });
         }
       }
     }
+  }
+  useEffect(() => {
     getCode();
   }, []);
   // Send access token to backend
