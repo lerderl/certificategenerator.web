@@ -112,55 +112,54 @@ const Login = () => {
       }
     }
   };
+  async function getCode() {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    if (params.code) {
+      console.log(params.code);
+      const res = await axios.post("/auth/login", { code: params.code });
+      console.log(res.status);
+      try {
+        if (res.status === 200 || res.status === 201) {
+          Toast.fire({
+            icon: "success",
+            title: "Signed in successfully"
+          });
+          setAccess(true);
+          navigate("/dashboard");
+          const userData = {
+            userId: res.data.data.userId,
+            name: res.data.data.name,
+            token: res.data.data.token,
+            refreshToken: res.data.data.refreshToken,
+            subscription: res.data.data.subscription
+          };
+          localStorage.setItem("userData", JSON.stringify(userData));
+          localStorage.setItem("profileName", JSON.stringify(userData.name));
+        }
+      } catch (error) {
+        if (error.status === 401) {
+          Toast.fire({
+            icon: "error",
+            title: "A user with this email could not be found."
+          });
+        } else if (error.status === 500) {
+          Toast.fire({
+            icon: "error",
+            title: "Internal server Error"
+          });
+        } else {
+          Toast.fire({
+            icon: "error",
+            title: "Something went wrong"
+          });
 
-  useEffect(() => {
-    async function getCode() {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlSearchParams.entries());
-      if (params.code) {
-        console.log(params.code);
-        const res = axios.post("/auth/login", { code: params.code });
-        console.log(res);
-        try {
-          if (res.status === 200 || res.status === 201) {
-            Toast.fire({
-              icon: "success",
-              title: "Signed in successfully"
-            });
-            setAccess(true);
-            navigate("/dashboard");
-            const userData = {
-              userId: res.data.data.userId,
-              name: res.data.data.name,
-              token: res.data.data.token,
-              refreshToken: res.data.data.refreshToken,
-              subscription: res.data.data.subscription
-            };
-            localStorage.setItem("userData", JSON.stringify(userData));
-            localStorage.setItem("profileName", JSON.stringify(userData.name));
-          }
-        } catch (error) {
-          if (error.status === 401) {
-            Toast.fire({
-              icon: "error",
-              title: "A user with this email could not be found."
-            });
-          } else if (error.status === 500) {
-            Toast.fire({
-              icon: "error",
-              title: "Internal server Error"
-            });
-          } else {
-            Toast.fire({
-              icon: "error",
-              title: "Something went wrong"
-            });
-
-            setLoading(false);
-          }
+          setLoading(false);
         }
       }
     }
+  }
+  useEffect(() => {
     getCode();
   }, []);
   // Send access token to backend
