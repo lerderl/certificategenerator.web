@@ -135,72 +135,48 @@ const Signup = () => {
     }
   };
   useEffect(() => {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(urlSearchParams.entries());
-    if (params.code) {
-      console.log(params.code);
-      const res = axios.post("/auth/signup", { code: params.code });
-      console.log(res);
-      try {
-        if (res.status === 200 || res.status === 201) {
-          Toast.fire({
-            icon: "success",
-            title: "Signed up successfully"
-          });
-
-          setLoading(false);
-          setAccess(true);
-          navigate("/dashboard");
-        } else {
-          Toast.fire({
-            icon: "error",
-            title: "Something went wrong"
-          });
-
-          setLoading(false);
-          throw new Error("Something went wrong");
-        }
-
-        const userData = {
-          userId: res.data.data.userId,
-          name: res.data.data.name,
-          token: res.data.data.token,
-          refreshToken: res.data.data.refreshToken,
-          subscription: res.data.data.subscription
-        };
-        localStorage.setItem("userData", JSON.stringify(userData));
-        localStorage.setItem("profileName", JSON.stringify(userData.name));
-      } catch (error) {
-        if (error.status === 400) {
-          Toast.fire({
-            icon: "error",
-            title: "A user for this email could not be found"
-          });
-
-          setLoading(false);
-        } else if (error.status === 401) {
-          Toast.fire({
-            icon: "error",
-            title: "Invalid password, please try again"
-          });
-          setLoading(false);
-        } else if (error.status === 500) {
-          Toast.fire({
-            icon: "error",
-            title: "Internal server Error"
-          });
-
-          setLoading(false);
-        } else {
-          Toast.fire({
-            icon: "error",
-            title: "Something went wrong"
-          });
-
-          setLoading(false);
+    async function getCode() {
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      if (params.code) {
+        console.log(params.code);
+        const res = await axios.post("/auth/signup", { code: params.code });
+        console.log(res);
+        try {
+          if (res.status === 200 || res.status === 201) {
+            Toast.fire({
+              icon: "success",
+              title: "Signed up successfully"
+            });
+            if (location.state?.from.pathname) {
+              navigate(location.state.from);
+            } else {
+              navigate("/login");
+            }
+            setAccess(true);
+          }
+        } catch (error) {
+          if (error.status === 401) {
+            Toast.fire({
+              icon: "error",
+              title: "A user with this email already exists"
+            });
+            setLoading(false);
+          } else if (error.status === 500) {
+            Toast.fire({
+              icon: "error",
+              title: "Internal server Error"
+            });
+          } else {
+            Toast.fire({
+              icon: "error",
+              title: "Something went wrong"
+            });
+          }
         }
       }
     }
+    getCode();
   }, []);
   // Send access token to backend
   async function createNewUserGoogle() {
